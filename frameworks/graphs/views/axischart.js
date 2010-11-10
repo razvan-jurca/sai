@@ -137,11 +137,9 @@ Sai.AxisChartView = Sai.CanvasView.extend({
       min = Math.min(ya.coordMin, ya.coordMax);
       max = Math.max(ya.coordMin, ya.coordMax);
       for (var y=min + ya.space; y < max; y += ya.space) {
-        console.log(y);
         path += 'M%@,%@L%@,%@'.fmt(sx, y, ex, y);
       }
     }
-
     canvas.path(path, gridAttrs.pathAttr || { stroke: '#999', strokeWidth: 1 }, 'grid');
   },
   
