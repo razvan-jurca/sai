@@ -19,8 +19,20 @@ Sai.BarChartView = Sai.AxisChartView.extend({
   // @example: {stacked: true, horizontal: true, colors: ['red' , 'blue', 'green']}
   dataAttrs: null,
   
-  // @param grid: show a grid for all the points
-  grid: null,
+  /**
+    Attributes to apply to the grid.
+    Posible values:
+      - verticals = show vertical lines
+      - horizontals = show horizontal lines
+      - pathAttr = attributes used for rendering the grid's path
+    
+    @property {Object}
+  */
+  grid: { 
+    verticals: YES,
+    horizontals: YES,
+    pathAttr: { stroke: '#999', strokeWidth: 1 }
+  },
   
   // @param yaxis: {color: 'black', step: 10}
   yaxis: null,
@@ -39,6 +51,7 @@ Sai.BarChartView = Sai.AxisChartView.extend({
 
     if (!firstTime) canvas.clear();  
     axis = this._makeAxi(f, canvas, d, dAttrs.stacked, dAttrs.horizontal) || [];
+    this._makeGrid(f, canvas, axis, grid);
     if (dAttrs.stacked){
       barFunc = dAttrs.horizontal ? this._processDataAsHStackedBarGraph : this._processDataAsVStackedBarGraph;
       barFunc(f, canvas, d, dAttrs, axis[0], axis[1]);
@@ -194,6 +207,24 @@ Sai.BarChartView = Sai.AxisChartView.extend({
     }
     
     return [xa, ya];
+  },
+
+  /**
+    Draw the grid of the chart.
+  
+    @param {Object} f The frame of the view.
+    @param {Sai.Canvas} canvas The canvas on which to draw the grid.
+    @param {Array} axis An array containing the x and y axis definitions.
+    @param {Object} grid The attribute hash used to style the grid.
+    @private
+  */
+  _makeGrid: function(f, canvas, axis, grid) {
+    var startX = Math.min(axis[0].coordMin, axis[0].coordMax),
+        startY = Math.min(axis[1].coordMin, axis[1].coordMax),
+        endX = Math.max(axis[0].coordMin, axis[0].coordMax),
+        endY = Math.max(axis[1].coordMin, axis[1].coordMax);
+  
+    this.makeGrid(canvas, axis, startX, startY, endX, endY, grid);
   },
   
   _calcForBarAlignment: function(len, axis, start, end, maxGroupNum){

@@ -105,9 +105,44 @@ Sai.AxisChartView = Sai.CanvasView.extend({
       if (!SC.none(tick) && l) func(tick, l);
     }
   },
-  
-  makeGrid: function(){
-    // TODO: [EG] make the grid
+  /**
+    Makes the grid of the chart.
+    
+    @param {Sai.Canvas} canvas The canvas onto which to draw the grid.
+    @param {Array} axis An array containing the x and y axis definition. Each of
+    the axis definitions should have the attributes coordMin, coordMax and space.
+    @param {Number} sx The x coordinate of the left of the grid.
+    @param {Number} sy The y coordinate of the top of the grid.
+    @param {Number} ex The x coordinate of the right of the grid.
+    @param {Number} ey The y coordinate of the bottom of the grid.
+    @param {Object} gridAttrs The attributes used to style the grid's lines.
+  */
+  makeGrid: function(canvas, axis, sx, sy, ex, ey, gridAttrs){
+    var min, max,
+        path = '',
+        xa = axis[0],
+        ya = axis[1];
+    if (SC.none(gridAttrs)) return;
+    
+    if (gridAttrs.verticals && !SC.none(xa)) {
+      // Draw vertical lines
+      min = Math.min(xa.coordMin, xa.coordMax);
+      max = Math.max(xa.coordMin, xa.coordMax);
+      for (var x=min + xa.space; x < max; x += xa.space) {
+        path += 'M%@,%@L%@,%@'.fmt(x, sy, x, ey);
+      }
+    }
+    if (gridAttrs.horizontals && !SC.none(ya)) {
+      // Draw horizontal lines
+      min = Math.min(ya.coordMin, ya.coordMax);
+      max = Math.max(ya.coordMin, ya.coordMax);
+      for (var y=min + ya.space; y < max; y += ya.space) {
+        console.log(y);
+        path += 'M%@,%@L%@,%@'.fmt(sx, y, ex, y);
+      }
+    }
+
+    canvas.path(path, gridAttrs.pathAttr || { stroke: '#999', strokeWidth: 1 }, 'grid');
   },
   
   rounder: function(x){
