@@ -118,13 +118,13 @@ Sai.AxisChartView = Sai.CanvasView.extend({
     @param {Object} gridAttrs The attributes used to style the grid's lines.
   */
   makeGrid: function(canvas, axis, sx, sy, ex, ey, gridAttrs){
-    var min, max,
+    var min, max, space,
         path = '',
         xa = axis[0],
         ya = axis[1];
     if (SC.none(gridAttrs)) return;
     
-    if (gridAttrs.verticals && !SC.none(xa)) {
+    if ((SC.none(gridAttrs.verticals) || gridAttrs.verticals) && !SC.none(xa)) {
       // Draw vertical lines
       min = Math.min(xa.coordMin, xa.coordMax);
       max = Math.max(xa.coordMin, xa.coordMax);
@@ -132,7 +132,7 @@ Sai.AxisChartView = Sai.CanvasView.extend({
         path += 'M%@,%@L%@,%@'.fmt(x, sy, x, ey);
       }
     }
-    if (gridAttrs.horizontals && !SC.none(ya)) {
+    if ((SC.none(gridAttrs.horizontals) || gridAttrs.horizontals) && !SC.none(ya)) {
       // Draw horizontal lines
       min = Math.min(ya.coordMin, ya.coordMax);
       max = Math.max(ya.coordMin, ya.coordMax);
@@ -140,7 +140,10 @@ Sai.AxisChartView = Sai.CanvasView.extend({
         path += 'M%@,%@L%@,%@'.fmt(sx, y, ex, y);
       }
     }
-    canvas.path(path, gridAttrs.pathAttr || { stroke: '#999', strokeWidth: 1 }, 'grid');
+    
+    if (path.length) {
+      canvas.path(path, gridAttrs.pathAttr || { stroke: '#999', strokeWidth: 1 }, 'grid-lines');
+    }
   },
   
   rounder: function(x){

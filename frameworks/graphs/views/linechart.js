@@ -33,9 +33,10 @@ Sai.LineChartView = Sai.AxisChartView.extend({
   renderCanvas: function(canvas, firstTime) {
     var grid = this.get('grid'),
         f = this.get('frame'), axis;
-    if (!firstTime) canvas.clear();  
+    if (!firstTime) canvas.clear();
     
     axis = this._makeAxi(f, canvas);
+    this._makeGrid(f, canvas, axis, grid);
     this._processData(f, canvas, axis[0], axis[1]);
   },
   
@@ -82,6 +83,7 @@ Sai.LineChartView = Sai.AxisChartView.extend({
       xa.coordScale = (endX - startX) / (xa.max - xa.min);
       tCount = ~~((xa.max - xa.min) / xa.step);
       space = (endX - startX)/tCount;
+      xa.space = space;
       this.makeAxis(canvas, startX, startY, endX, startY, xa, {direction: 'x', len: 5, count: tCount+1, space: space});
     }
     // Y Axis
@@ -91,10 +93,29 @@ Sai.LineChartView = Sai.AxisChartView.extend({
       ya.coordScale = (startY - endY) / (ya.max - ya.min);
       tCount = ~~((ya.max - ya.min) / ya.step);
       space = (startY - endY)/tCount;
+      ya.space = space;
       this.makeAxis(canvas, startX, startY, startX, endY, ya, {direction: 'y', len: 5, count: tCount+1, space: space});
     }
     
     return [xa, ya];
+  },
+  
+  /**
+    Draw the grid of the chart.
+  
+    @param {Object} f The frame of the view.
+    @param {Sai.Canvas} canvas The canvas on which to draw the grid.
+    @param {Array} axis An array containing the x and y axis definitions.
+    @param {Object} grid The attribute hash used to style the grid.
+    @private
+  */
+  _makeGrid: function(f, canvas, axis, grid) {
+    var startX = Math.min(axis[0].coordMin, axis[0].coordMax),
+        startY = Math.min(axis[1].coordMin, axis[1].coordMax),
+        endX = Math.max(axis[0].coordMin, axis[0].coordMax),
+        endY = Math.max(axis[1].coordMin, axis[1].coordMax);
+    
+    this.makeGrid(canvas, axis, startX, startY, endX, endY, grid);
   },
     
   mouseDown: function(evt) {
