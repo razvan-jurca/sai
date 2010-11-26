@@ -117,7 +117,7 @@ Sai.AxisChartView = Sai.CanvasView.extend({
     @param {Number} ey The y coordinate of the bottom of the grid.
     @param {Object} gridAttrs The attributes used to style the grid's lines.
   */
-  makeGrid: function(canvas, axis, sx, sy, ex, ey, gridAttrs){
+  makeGrid: function(canvas, axis, sx, sy, ex, ey, gridAttrs) {
     var min, max, space,
         path = '',
         xa = axis[0],
@@ -128,7 +128,7 @@ Sai.AxisChartView = Sai.CanvasView.extend({
       // Draw vertical lines
       min = Math.min(xa.coordMin, xa.coordMax);
       max = Math.max(xa.coordMin, xa.coordMax);
-      for (var x=min + xa.space; x < max; x += xa.space) {
+      for (var x=min + xa.space; x < max - 10; x += xa.space) {
         path += 'M%@,%@L%@,%@'.fmt(x, sy, x, ey);
       }
     }
@@ -136,7 +136,7 @@ Sai.AxisChartView = Sai.CanvasView.extend({
       // Draw horizontal lines
       min = Math.min(ya.coordMin, ya.coordMax);
       max = Math.max(ya.coordMin, ya.coordMax);
-      for (var y=min + ya.space; y < max; y += ya.space) {
+      for (var y=min + ya.space; y < max - 10; y += ya.space) {
         path += 'M%@,%@L%@,%@'.fmt(sx, y, ex, y);
       }
     }

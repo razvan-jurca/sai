@@ -28,15 +28,57 @@ Sai.LineChartView = Sai.AxisChartView.extend({
   // @param xaxis: {min: 10, max: 100, step: 10, weight: 1, color: 'blue'}
   xaxis: null,
   
+  
+  /**
+    Offset the graph relative to the margins. Use only left, right, top, bottom.
+    Use null to have default behaviour.
+    
+    @property {Object}
+  */
+  chartLayout: null,
+  
+  /**
+    The labels of the chart's legend.
+    
+    @property {Array}
+  */
+  legend: [],
+  
+  /**
+    The attributes to use for displaying the legend.
+      - width = the width of the legend area
+      - sampleBarSize = the size of the colored bar to be displayed
+      - align = text align: center, left, right
+      - fontSize = the size of the font used for the labels
+      - labelColor = the color of the labels
+      - defaultBarColor = the color to be used for the sample bars that don't 
+    have a corresponding color in data attributes color.
+      
+    @property {Object}
+  */
+  legendAttrs: { 
+    width: 200, 
+    sampleBarSize: 14,
+    align: 'left',
+    fontSize: 12,
+    labelColor: 'black',
+    defaultBarColor: '#aaa'
+  },
+  
   displayProperties: 'data dataAttrs grid yaxis xaxis'.w(),
   
   renderCanvas: function(canvas, firstTime) {
     var grid = this.get('grid'),
-        f = this.get('frame'), axis;
+        f = this.get('frame'), axis,
+        legend = this.get('legend'),
+        dAttrs = this.get('dataAttrs');
     if (!firstTime) canvas.clear();
     
     axis = this._makeAxi(f, canvas);
     this._makeGrid(f, canvas, axis, grid);
+    if (legend) {
+      this._makeLegend(f, canvas, legend, dAttrs, this.get('legendAttrs'), Math.max(axis[0].coordMin, axis[0].coordMax));
+    }
     this._processData(f, canvas, axis[0], axis[1]);
   },
   
@@ -74,7 +116,27 @@ Sai.LineChartView = Sai.AxisChartView.extend({
         // Y coordinate stuff
         ya = this.get('yaxis') || {}, yScale,
         startY = f.height*(1.0 - buffer),
+        tmpStartX, tmpStartY, tmpEndX, tmpEndY,
+        chartLayout = this.get('chartLayout'),
         endY = f.height*buffer;
+    
+    if (!SC.none(chartLayout)) {
+      tmpStartX = chartLayout.left || 10;
+      tmpStartY = f.height - (chartLayout.bottom || 10);
+      tmpEndX = f.width - (chartLayout.right || 10);
+      tmpEndY = chartLayout.top || 10;
+    
+      if (tmpStartX < tmpEndX) {
+        startX = tmpStartX;
+        endX = tmpEndX;
+      }
+    
+      if (tmpStartY > tmpEndY) {
+        startY = tmpStartY;
+        endY = tmpEndY;
+      }
+    }
+    
     // X Axis
     if (xa){
       // Calculate the coordinate system
@@ -117,7 +179,64 @@ Sai.LineChartView = Sai.AxisChartView.extend({
     
     this.makeGrid(canvas, axis, startX, startY, endX, endY, grid);
   },
+  
+  /**
+    Draw the legend of the chart.
     
+    @param {Object} frame The frame of the view.
+    @param {Sai.Canvas} canvas The canvas on which to draw the legend.
+    @param {Array} legend The array of labels for the legend.
+    @param {Object} dAttrs The attributes of the bar's.
+    @param {Object} lAttrs The attributes used to style the legend.
+    @param {Number} top The y coordinate of the top of the chart.
+  */
+  _makeLegend: function(frame, canvas, legend, dAttrs, lAttrs, left) {
+    var xLeft, width, height, xTop,
+        num = legend.length,
+        colors = [],
+        stroke = '#555',
+        strokeWidth = 1,
+        barSize = lAttrs.sampleBarSize || 14,
+        legendSize = lAttrs.height || frame.height,
+        labelColor = lAttrs.labelColor || 'black',
+        fontSize = lAttrs.fontSize || 12,
+        textAnchor = lAttrs.align || 'center',
+        defaultBarColor = lAttrs.defaultBarColor || '#aaa';
+    
+    for (var idx=0; idx < dAttrs.length; ++ idx) {
+      if (!SC.none(dAttrs.objectAt(idx)) && !SC.none(dAttrs.objectAt(idx).stroke)) {
+        colors.push(dAttrs.objectAt(idx).stroke);
+      }
+    }
+    
+    if (width - left < 100 || num < 1) return;
+    
+    while (colors.length < num) {
+      colors.push(defaultBarColor);
+    }
+    
+    xLeft = left + 10;
+    width = ~~(frame.width - left - 20 - barSize);
+    if (width < 50) return;
+    height = legendSize / num;
+    xTop = ~~((frame.height - legendSize) / 2);
+    
+    for (var i=0; i < num; ++ i) {
+      canvas.rectangle(~~xLeft, ~~xTop + 1, ~~barSize, ~~barSize, 0, {
+          stroke: stroke,
+          fill: colors[i],
+          strokeWidth: strokeWidth
+        }, 'legend-%@'.fmt(i));
+      canvas.text(~~(xLeft + 4 + barSize), ~~xTop, width, fontSize, legend[i], {
+          fill: labelColor,
+          stroke: labelColor,
+          textAnchor: textAnchor,
+          fontSize: fontSize
+        }, 'legend-label-%@'.fmt(i));
+      xTop += height;
+    }
+  },
+  
   mouseDown: function(evt) {
     // console.log(evt.target);
   }

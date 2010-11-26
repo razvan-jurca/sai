@@ -120,7 +120,7 @@ Sai.PieChartView = Sai.CanvasView.extend(
           w = value.length * 7;
           
           // FIXME: [EG GD] This is only temp until I add background color to text fields
-          col = showValues.bcolor || 'lightgray';
+          col = showValues.bcolor || 'transparent';
           stroke = showValues.bStroke || 'gray';
           xl = middle.x - (w+8)/2+2; // <= FIXME: [EG GD] Why is this like this
           yl = middle.y - 9; // <= FIXME: [EG GD] Why is this like this

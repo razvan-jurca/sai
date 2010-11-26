@@ -16,6 +16,10 @@ Sai.Canvas = SC.Object.extend({
     }
     else {
       Sai.canvas_clear(this._canvas || {});
+      if (!SC.none(this._canvas)) {
+        this._canvas.setAttributeNS(null, 'width', '%@px'.fmt(frame.width));
+        this._canvas.setAttributeNS(null, 'height', '%@px'.fmt(frame.height));
+      }
     }
     
     // make the individual shapes on the canvas
