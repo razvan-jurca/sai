@@ -122,9 +122,9 @@ Sai.PieChartView = Sai.CanvasView.extend(
           // FIXME: [EG GD] This is only temp until I add background color to text fields
           col = showValues.bcolor || 'transparent';
           stroke = showValues.bStroke || 'gray';
-          xl = middle.x - (w+8)/2+2; // <= FIXME: [EG GD] Why is this like this
+          xl = middle.x - (w+8)/2+4; // <= FIXME: [EG GD] Why is this like this
           yl = middle.y - 9; // <= FIXME: [EG GD] Why is this like this
-          lWidth = 18; // <= FIXME: [EG GD] Why is this like this
+          lWidth = 20; // <= FIXME: [EG GD] Why is this like this
           lHeight = w+8;
           canvas.rectangle(xl, yl, lWidth, lHeight, 0, {fill: col, stroke: stroke}, 'label-back-%@'.fmt(i));
           
@@ -142,15 +142,17 @@ Sai.PieChartView = Sai.CanvasView.extend(
           s = Sai.Rectangle.create({
             x: lx,
             y: lh,
-            width: 10,
-            height: 10,
-            fill: color(i)
+            width: 14,
+            height: 14,
+            fill: color(i),
+            stroke: '#000',
+            strokeWidth : 1
           });
           t = Sai.Text.create({
-            x: 14+lx,
+            x: 18+lx,
             y: lh,
             width: lw,
-            height: 10,
+            height: 14,
             text: label,
             fill: 'black' // text color
           });

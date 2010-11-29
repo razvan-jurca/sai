@@ -128,7 +128,10 @@ Sai.AxisChartView = Sai.CanvasView.extend({
       // Draw vertical lines
       min = Math.min(xa.coordMin, xa.coordMax);
       max = Math.max(xa.coordMin, xa.coordMax);
-      for (var x=min + xa.space; x < max - 10; x += xa.space) {
+      if (!SC.none(xa.tickCount)) {
+        max = min + xa.space * xa.tickCount;
+      }
+      for (var x=min + xa.space; x < max; x += xa.space) {
         path += 'M%@,%@L%@,%@'.fmt(x, sy, x, ey);
       }
     }
@@ -136,7 +139,10 @@ Sai.AxisChartView = Sai.CanvasView.extend({
       // Draw horizontal lines
       min = Math.min(ya.coordMin, ya.coordMax);
       max = Math.max(ya.coordMin, ya.coordMax);
-      for (var y=min + ya.space; y < max - 10; y += ya.space) {
+      if (!SC.none(xa.tickCount)) {
+        max = min + xa.space * xa.tickCount;
+      }
+      for (var y=min + ya.space; y < max; y += ya.space) {
         path += 'M%@,%@L%@,%@'.fmt(sx, y, ex, y);
       }
     }

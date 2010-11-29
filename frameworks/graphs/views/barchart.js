@@ -340,6 +340,7 @@ Sai.BarChartView = Sai.AxisChartView.extend({
     axis.offset = 0.5;
     axis.maxGroupNum = maxGroupNum;
     tCount = len;
+    axis.tickCount = tCount;
     
     return [axis, tCount];
   },
@@ -358,13 +359,13 @@ Sai.BarChartView = Sai.AxisChartView.extend({
     } else if(hasStepCount){ // use a total count of X
       tCount = axis.steps;
       axis.step = ~~(maxHeight/tCount);
-    } else { // Use step increments of X
-      tCount = ~~(maxHeight / axis.step);
     }
     
+    tCount = maxHeight / axis.step;
+    
     axis.space = (end - start)/tCount;
-    tCount += 1; // add the last tick to the line
     axis.offset = 0;
+    axis.tickCount = tCount;
     
     // Return modified Axis and tick count
     return [axis, tCount];
