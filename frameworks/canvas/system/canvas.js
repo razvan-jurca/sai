@@ -99,6 +99,7 @@ Sai.Canvas = SC.Object.extend({
       id: id,
       stroke: attrs.stroke,
       strokeWidth: attrs.strokeWidth,
+      dotted: attrs.dotted,
       path: path
     });
     

@@ -85,6 +85,18 @@ Sai.mixin({
       // elem = elem.attr('strokecolor', nVal); 
       elem = Sai.vml_begin_node(elem, 'stroke').attr({on: "True", color: nVal}).end();
     }
+    else if (attr === 'dotted'){
+      if (val === 'dot') {
+        nVal = 'dot';
+      } else if (val === 'dash') {
+        nVal = 'dash';
+      } else if (val === 'alternate') {
+        nVal = 'dashdot';
+      } else {
+        return elem;
+      }
+      elem = elem.attr('dashstyle', nVal);
+    }
     else {
       elem = elem.attr(attr, val); 
     }

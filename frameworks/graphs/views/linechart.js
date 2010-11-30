@@ -51,7 +51,8 @@ Sai.LineChartView = Sai.AxisChartView.extend({
       - align = text align: center, left, right
       - fontSize = the size of the font used for the labels
       - labelColor = the color of the labels
-      - defaultBarColor = the color to be used for the sample bars that don't 
+      - defaultBarColor = the color to be used for the sample bars that don't
+      - colors = array of colors to use for the sample bars
     have a corresponding color in data attributes color.
       
     @property {Object}
@@ -203,9 +204,13 @@ Sai.LineChartView = Sai.AxisChartView.extend({
         textAnchor = lAttrs.align || 'center',
         defaultBarColor = lAttrs.defaultBarColor || '#aaa';
     
-    for (var idx=0; idx < dAttrs.length; ++ idx) {
-      if (!SC.none(dAttrs.objectAt(idx)) && !SC.none(dAttrs.objectAt(idx).stroke)) {
-        colors.push(dAttrs.objectAt(idx).stroke);
+    if (!SC.none(lAttrs.colors)) {
+      colors = lAttrs.colors;
+    } else {
+      for (var idx=0; idx < dAttrs.length; ++ idx) {
+        if (!SC.none(dAttrs.objectAt(idx)) && !SC.none(dAttrs.objectAt(idx).stroke)) {
+          colors.push(dAttrs.objectAt(idx).stroke);
+        }
       }
     }
     

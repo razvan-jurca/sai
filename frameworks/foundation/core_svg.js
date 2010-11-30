@@ -37,21 +37,21 @@ Sai.mixin({
     
     // defaults
     if (SC.typeOf(attrs) === SC.T_STRING){
-      normVal = this.svg_format_attr(elem, attrs, value);
+      normVal = this.svg_format_attr(elem, attrs, value, null);
     }
     else if (SC.typeOf(attrs) === SC.T_HASH){
       attrs.stroke = attrs.stroke || 'none';
       attrs.fill = attrs.fill || 'none';
       for(key in attrs){
-        normVal = this.svg_format_attr(elem, key, attrs[key]);
+        normVal = this.svg_format_attr(elem, key, attrs[key], attrs);
       }
     }
     
     return elem;
   },
   
-  svg_format_attr: function(elem, attr, val){
-    var nVal = val, nAttr = attr, lookup;
+  svg_format_attr: function(elem, attr, val, attrs){
+    var nVal = val, nAttr = attr, lookup, width, dWidth;
     attr = attr ? attr.toLowerCase() : null;
     
     if (attr === 'stroke-width'){
@@ -76,6 +76,25 @@ Sai.mixin({
     else if (attr === 'text-anchor'){
       lookup = {left: 'start', center: 'middle', right: 'end'};
       nVal = lookup[val] || 'start';
+    }
+    // Dotted line
+    else if (attr === 'dotted') {
+      if (SC.none(attrs)) {
+        width = 2;
+      } else {
+        width = attrs['stroke-width'] || 2;
+      }
+      dWidth = width * 2;
+      nAttr = 'stroke-dasharray';
+      if (val === 'dot') {
+        nVal = '%@, %@'.fmt(width, dWidth);
+      } else if (val === 'dash') {
+        nVal = '%@, %@'.fmt(4 * width,  dWidth);
+      } else if (val === 'alternate') {
+        nVal = '%@, %@, %@, %@'.fmt(width, dWidth, 4 * width, dWidth);
+      } else {
+        return '';
+      }
     }
     elem.setAttributeNS(null, nAttr, nVal);
     return nVal;

@@ -12,6 +12,15 @@ Sai.Path = Sai.Shape.extend({
         
     elem = Sai.canvas_create('path', canvas, path, attrs);
     this._element = elem;
+  },
+  
+  /**
+    Override the basic attrs of a shape to include dotted, dashed line.
+  */
+  basicAttrs: function(attrs) {
+    attrs = sc_super();    
+    attrs.dotted = this.get('dotted') || 'none';
+    return attrs;
   }
 });
 
