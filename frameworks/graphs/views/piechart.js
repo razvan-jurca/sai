@@ -14,7 +14,7 @@ Sai.PieChartView = Sai.CanvasView.extend(
   // @param data: This is an array of pairs for the data points
   // @example: [1,2,3,4,5,6]
   // Pie #1: "1, 2, 3, 4, 5, 6"
-  data: null,
+  data: [],
 
   // @param: dataAttrs - Hash of styling parameters
   // @example: dataAttrs: { colors: ['green', 'blue', '#F8A377'], radius: 100, padding: 20, values: {font: '9', pos: 'middle', color: 'black'}},
@@ -38,11 +38,14 @@ Sai.PieChartView = Sai.CanvasView.extend(
     dAttrs.values = (SC.typeOf(vals) === SC.T_BOOL) ? {fontSize: '9', pos: 'middle', color: 'black', bColor: 'lightgray'} : (SC.typeOf(vals) === SC.T_HASH) ? vals : null;
     
     if (!firstTime) canvas.clear(); // Make sure we are stating from scratch
+    console.log('DATA = ' + d);
+    
     this._processPieData(f, canvas, d, dAttrs, legend);
   },
 
   _processPieData: function(frame, canvas, values, atts, legend) {
     atts = atts || {};
+    console.log('VALUES = ' + values);
     var r = atts.radius || 100, l = this.get('layout'),
         len = values.length, series = [], sectors = [],
         angle = 0, total = 0, others = 0, cut = 9,
@@ -164,7 +167,7 @@ Sai.PieChartView = Sai.CanvasView.extend(
       }
 
     } ;
-    
+     
     function sector(cx, cy, r, startAngle, endAngle, fill) {
       var rad = Math.PI / 180,
         x1 = cx + r * Math.cos(-startAngle * rad),
@@ -174,6 +177,7 @@ Sai.PieChartView = Sai.CanvasView.extend(
         y2 = cy + r * Math.sin(-endAngle * rad),
         ym = cy + r / 2 * Math.sin(-(startAngle + (endAngle - startAngle) / 2) * rad),
         res = ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(Math.abs(endAngle - startAngle) > 180), 1, x2, y2, "z"];
+        //console.log('EA = ' + endAngle);
       res.middle = {x: xm, y: ym};
       return res;
     }
@@ -210,7 +214,7 @@ Sai.PieChartView = Sai.CanvasView.extend(
           return b.value - a.value;
         });
       }
-
+      
       for (i = 0; i < len; i++) {
         if (defcut && (values[i] * 360 / total <= 1.5)) {
           cut = i;
@@ -223,17 +227,29 @@ Sai.PieChartView = Sai.CanvasView.extend(
           others = values[cut].value;
         }
       }
+      
       len = Math.min(cut + 1, values.length);
+        
       if (others) {
         values.splice(len);
         values[cut].others = true;
       }
       for (i = 0; i < len; i++) {
-        var mangle = angle - 360 * values[i] / total / 2;
+       
+      /**
+        Fix the data when inconsistent
+      */
+       if(isNaN(values[i])){
+         values[i] = values[i].value;
+       }
+       
+       var mangle = angle - 360 * values[i] / total / 2;
+       
         if (!i) {
           angle = 90 - mangle;
           mangle = angle - 360 * values[i] / total / 2;
         }
+       
         if (atts.init) {
           var ipath = sector(cx, cy, 1, angle, angle - 360 * values[i] / total).join(",");
         }
@@ -249,6 +265,7 @@ Sai.PieChartView = Sai.CanvasView.extend(
         p.middle = path.middle;
         p.mangle = mangle;
         p = canvas.element(p, "arc-%@".fmt(i)) ;
+        //console.log('P = ' +p.path);
         sectors.push(p);
         series.push(p);
         if (atts.init) p.animate({path: path.join(",")}, (+atts.init - 1) || 1000, ">");
