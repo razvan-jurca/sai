@@ -52,7 +52,7 @@ Sai.AxisChartView = Sai.CanvasView.extend({
   
   makeLabels: function(canvas, tickPts, axisAttrs, ticks, tLabels){
     var dir, labels, l, lAttrs, tick, aa, t, labelPosFunc, col,
-        lWidth, lHeight, lOff, lsw;
+        lWidth, lHeight, lOff, lsw, iWidth, iHeight, img, imag;
     
     aa = axisAttrs || {};
     dir = ticks ? ticks.direction || 'x' : 'x';
@@ -64,6 +64,9 @@ Sai.AxisChartView = Sai.CanvasView.extend({
     lOff = lAttrs.offset || 0;
     col = aa.labelColor || aa.color || 'black';
     lsw = SC.none(lAttrs.strokeWidth) || 0;
+    iWidth = lAttrs.imageWidth || 0;
+    iHeight = lAttrs.imageHeight || 0;
+    img = lAttrs.image || null;
     
     // Create the label positioning function
     if (dir === 'x'){
@@ -73,6 +76,15 @@ Sai.AxisChartView = Sai.CanvasView.extend({
         y = +t.y + lOff;
         canvas.text(x, y, lWidth, lHeight, label, {fill: col, stroke: col, textAnchor: 'center', fontSize: lAttrs.fontSize, strokeWidth: lsw}, 'label-%@'.fmt(label));
         // canvas.rectangle(x, y, lWidth, lHeight, 0, {fill: aa.labelColor || aa.color || 'black', textAnchor: 'center', fontSize: lAttrs.fontSize}, 'label-%@'.fmt(label));
+        imag = Sai.Image.create({
+          x: x + (iWidth/2) - 2,
+          y: y,
+          width: iWidth,
+          height: iHeight,
+          image: img
+        });
+        imag = canvas.element(imag);
+        //canvas.image(x, y, iWidth, iHeight, img);
       };
     }
     else{
@@ -82,6 +94,15 @@ Sai.AxisChartView = Sai.CanvasView.extend({
         y = t.y - (lHeight/2) + lOff;
         canvas.text(x, y, lWidth, lHeight, label, {fill: col, stroke: col, textAnchor: 'right', fontSize: lAttrs.fontSize}, 'label-%@'.fmt(label));
         // canvas.rectangle(x, y, lWidth, lHeight, 0, {fill: aa.labelColor || aa.color || 'black', textAnchor: 'right', fontSize: lAttrs.fontSize}, 'label-%@'.fmt(label));
+        imag = Sai.Image.create({
+          x: x + (iWidth/2) - 2,
+          y: y,
+          width: iWidth,
+          height: iHeight,
+          image: img
+        });
+        imag = canvas.element(imag);
+        //canvas.image(x, y, iWidth, iHeight, img);
       };
     }
     
