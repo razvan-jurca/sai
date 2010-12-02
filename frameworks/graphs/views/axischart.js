@@ -142,7 +142,7 @@ Sai.AxisChartView = Sai.CanvasView.extend({
       if (!SC.none(ya.tickCount)) {
         max = min + ya.space * ya.tickCount;
       }
-      for (var y=min + ya.space; y < max; y += ya.space) {
+      for (var y=max - ya.space; y > min; y -= ya.space) {
         path += 'M%@,%@L%@,%@'.fmt(sx, y, ex, y);
       }
     }

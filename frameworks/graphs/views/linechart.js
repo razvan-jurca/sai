@@ -144,9 +144,10 @@ Sai.LineChartView = Sai.AxisChartView.extend({
       xa.coordMin = startX;
       xa.coordMax = endX;
       xa.coordScale = (endX - startX) / (xa.max - xa.min);
-      tCount = ~~((xa.max - xa.min) / xa.step);
+      tCount = ((xa.max - xa.min) / xa.step);
       space = (endX - startX)/tCount;
       xa.space = space;
+      tCount = ~~tCount;
       this.makeAxis(canvas, startX, startY, endX, startY, xa, {direction: 'x', len: 5, count: tCount+1, space: space});
     }
     // Y Axis
@@ -154,9 +155,10 @@ Sai.LineChartView = Sai.AxisChartView.extend({
       ya.coordMin = startY;
       ya.coordMax = endY;
       ya.coordScale = (startY - endY) / (ya.max - ya.min);
-      tCount = ~~((ya.max - ya.min) / ya.step);
+      tCount = ((ya.max - ya.min) / ya.step);
       space = (startY - endY)/tCount;
       ya.space = space;
+      tCount = ~~tCount;
       this.makeAxis(canvas, startX, startY, startX, endY, ya, {direction: 'y', len: 5, count: tCount+1, space: space});
     }
     
