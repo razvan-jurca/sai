@@ -37,7 +37,9 @@ Sai.AxisChartView = Sai.CanvasView.extend({
         sx = tp[2];
         sy = tp[3];
         currTick = {x: rounder(tp[0]), y: rounder(tp[1])};
-        path += 'L%@,%@M%@,%@'.fmt(currTick.x, currTick.y, rounder(tp[2]), rounder(tp[3]));
+        if ((SC.none(ticks.hidden) || !ticks.hidden) && ticks.hidden === NO) {
+          path += 'L%@,%@M%@,%@'.fmt(currTick.x, currTick.y, rounder(tp[2]), rounder(tp[3]));
+        }
         tickPts[i] = {t: currTick, idx: i*step};
         tickLabels.push(''+i*step);
       }
@@ -76,15 +78,17 @@ Sai.AxisChartView = Sai.CanvasView.extend({
         y = +t.y + lOff;
         canvas.text(x, y, lWidth, lHeight, label, {fill: col, stroke: col, textAnchor: 'center', fontSize: lAttrs.fontSize, strokeWidth: lsw}, 'label-%@'.fmt(label));
         // canvas.rectangle(x, y, lWidth, lHeight, 0, {fill: aa.labelColor || aa.color || 'black', textAnchor: 'center', fontSize: lAttrs.fontSize}, 'label-%@'.fmt(label));
-        imag = Sai.Image.create({
-          x: x + (iWidth/2) - 2,
-          y: y,
-          width: iWidth,
-          height: iHeight,
-          image: img
-        });
-        imag = canvas.element(imag);
-        //canvas.image(x, y, iWidth, iHeight, img);
+        if (img) {
+          imag = Sai.Image.create({
+            x: x + (iWidth/2) - 2,
+            y: y,
+            width: iWidth,
+            height: iHeight,
+            image: img
+          });
+          imag = canvas.element(imag);
+          //canvas.image(x, y, iWidth, iHeight, img);
+        }
       };
     }
     else{
@@ -94,15 +98,17 @@ Sai.AxisChartView = Sai.CanvasView.extend({
         y = t.y - (lHeight/2) + lOff;
         canvas.text(x, y, lWidth, lHeight, label, {fill: col, stroke: col, textAnchor: 'right', fontSize: lAttrs.fontSize}, 'label-%@'.fmt(label));
         // canvas.rectangle(x, y, lWidth, lHeight, 0, {fill: aa.labelColor || aa.color || 'black', textAnchor: 'right', fontSize: lAttrs.fontSize}, 'label-%@'.fmt(label));
-        imag = Sai.Image.create({
-          x: x + (iWidth/2) - 2,
-          y: y,
-          width: iWidth,
-          height: iHeight,
-          image: img
-        });
-        imag = canvas.element(imag);
-        //canvas.image(x, y, iWidth, iHeight, img);
+        if (img) {
+          imag = Sai.Image.create({
+            x: x + (iWidth/2) - 2,
+            y: y,
+            width: iWidth,
+            height: iHeight,
+            image: img
+          });
+          imag = canvas.element(imag);
+          //canvas.image(x, y, iWidth, iHeight, img);
+        }
       };
     }
     

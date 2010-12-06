@@ -111,6 +111,7 @@ Sai.LineChartView = Sai.AxisChartView.extend({
   
   _makeAxi: function(f, canvas){
     var axis, path, buffer = 0.1, tCount, space,
+        hidden,
         xa = this.get('xaxis') || {},
         startX = f.width*buffer,
         endX = f.width*(1.0 - buffer),
@@ -148,7 +149,11 @@ Sai.LineChartView = Sai.AxisChartView.extend({
       space = (endX - startX)/tCount;
       xa.space = space;
       tCount = ~~tCount;
-      this.makeAxis(canvas, startX, startY, endX, startY, xa, {direction: 'x', len: 5, count: tCount+1, space: space});
+      if (!SC.none(xa.ticks)) {
+        this.makeAxis(canvas, startX, startY, endX, startY, xa, {direction: 'x', len: 5, count: tCount+1, space: space, hidden: !xa.ticks});
+      } else {
+        this.makeAxis(canvas, startX, startY, endX, startY, xa, {direction: 'x', len: 5, count: tCount+1, space: space});
+      }
     }
     // Y Axis
     if (ya){
@@ -159,7 +164,11 @@ Sai.LineChartView = Sai.AxisChartView.extend({
       space = (startY - endY)/tCount;
       ya.space = space;
       tCount = ~~tCount;
-      this.makeAxis(canvas, startX, startY, startX, endY, ya, {direction: 'y', len: 5, count: tCount+1, space: space});
+      if (!SC.none(ya.ticks)) {
+        this.makeAxis(canvas, startX, startY, startX, endY, ya, {direction: 'y', len: 5, count: tCount+1, space: space, hidden: !ya.ticks});
+      } else {
+        this.makeAxis(canvas, startX, startY, startX, endY, ya, {direction: 'y', len: 5, count: tCount+1, space: space});
+      }
     }
     
     return [xa, ya];

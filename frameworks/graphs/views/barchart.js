@@ -224,6 +224,7 @@ Sai.BarChartView = Sai.AxisChartView.extend({
   _makeAxi: function(f, canvas, d, isStacked, isHorizontal){
     var axis, path, tCount, space, offset, barGroups, tmp, aa,
         tmpStartX, tmpStartY, tmpEndX, tmpEndY,
+        hidden,
         xa = this.get('xaxis') || {},
         ya = this.get('yaxis') || {}, yScale,
         chartLayout = this.get('chartLayout'),
@@ -260,7 +261,11 @@ Sai.BarChartView = Sai.AxisChartView.extend({
       xa.coordMax = endX;
       aa = isHorizontal ? this._calcForLabelAlignment(xa, startX, endX, barGroups.maxHeight) : this._calcForBarAlignment(dLen, xa, startX, endX, barGroups.maxGroupNum);
       xa = aa[0]; tCount = aa[1];
-      if (SC.none(xa.hidden) || !xa.hidden) this.makeAxis(canvas, startX, startY, endX, startY, xa, {direction: 'x', len: 5, count: tCount, space: xa.space, offset: xa.offset});
+      if (!SC.none(xa.ticks)) {
+        if (SC.none(xa.hidden) || !xa.hidden) this.makeAxis(canvas, startX, startY, endX, startY, xa, {direction: 'x', len: 5, count: tCount, space: xa.space, offset: xa.offset, hidden: !xa.ticks});
+      } else {
+        if (SC.none(xa.hidden) || !xa.hidden) this.makeAxis(canvas, startX, startY, endX, startY, xa, {direction: 'x', len: 5, count: tCount, space: xa.space, offset: xa.offset});
+      }
     }
     // Y Axis
     if (ya){
@@ -268,7 +273,11 @@ Sai.BarChartView = Sai.AxisChartView.extend({
       ya.coordMax = endY;
       aa = isHorizontal ? this._calcForBarAlignment(dLen, ya, endY, startY, barGroups.maxGroupNum) : this._calcForLabelAlignment(ya, endY, startY, barGroups.maxHeight);
       ya = aa[0]; tCount = aa[1];
-      if (SC.none(ya.hidden) || !ya.hidden) this.makeAxis(canvas, startX, startY, startX, endY, ya, {direction: 'y', len: 5, count: tCount, space: ya.space, offset: ya.offset});
+      if (!SC.none(ya.ticks)) {
+        if (SC.none(ya.hidden) || !ya.hidden) this.makeAxis(canvas, startX, startY, startX, endY, ya, {direction: 'y', len: 5, count: tCount, space: ya.space, offset: ya.offset, hidden: !ya.ticks});
+      } else {
+        if (SC.none(ya.hidden) || !ya.hidden) this.makeAxis(canvas, startX, startY, startX, endY, ya, {direction: 'y', len: 5, count: tCount, space: ya.space, offset: ya.offset});
+      }
     }
     
     return [xa, ya];
