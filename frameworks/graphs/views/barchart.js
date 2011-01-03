@@ -43,6 +43,7 @@ Sai.BarChartView = Sai.AxisChartView.extend({
       - labelColor = the color of the labels
       - defaultBarColor = the color to be used for the sample bars that don't 
     have a corresponding color in data attributes color.
+      - position = the position of the legend, supports: top, bottom
       
     @property {Object}
   */
@@ -52,7 +53,8 @@ Sai.BarChartView = Sai.AxisChartView.extend({
     align: 'left',
     fontSize: 12,
     labelColor: 'black',
-    defaultBarColor: '#aaa'
+    defaultBarColor: '#aaa',
+    position: 'top'
   },
   
   /**
@@ -97,7 +99,7 @@ Sai.BarChartView = Sai.AxisChartView.extend({
       barFunc = dAttrs.horizontal ? this._processDataAsHRegularBarGraph : this._processDataAsVRegularBarGraph;
       barFunc(f, canvas, d, dAttrs, axis[0], axis[1]);
     }
-    this._makeLegend(f, canvas, legend, dAttrs, this.get('legendAttrs'), Math.min(axis[1].coordMin, axis[1].coordMax));
+    this._makeLegend(f, canvas, legend, dAttrs, this.get('legendAttrs'), { top: Math.min(axis[1].coordMin, axis[1].coordMax), bottom: Math.max(axis[1].coordMin, axis[1].coordMax) });
   },
   
   _processDataAsVRegularBarGraph: function(f, canvas, d, dAttrs, xaxis, yaxis){
@@ -311,7 +313,7 @@ Sai.BarChartView = Sai.AxisChartView.extend({
     @param {Object} lAttrs The attributes used to style the legend.
     @param {Number} top The y coordinate of the top of the chart.
   */
-  _makeLegend: function(frame, canvas, legend, dAttrs, lAttrs, top) {
+  _makeLegend: function(frame, canvas, legend, dAttrs, lAttrs, layout) {
     var labelWidth, xLeft, xRight, textWidth,
         width = frame.width,
         num = legend.length,
@@ -323,20 +325,36 @@ Sai.BarChartView = Sai.AxisChartView.extend({
         labelColor = lAttrs.labelColor || 'black',
         fontSize = lAttrs.fontSize || 12,
         textAnchor = lAttrs.align || 'center',
-        defaultBarColor = lAttrs.defaultBarColor || '#aaa';
+        defaultBarColor = lAttrs.defaultBarColor || '#aaa',
+        position = lAttrs.position || 'top',
+        yTop,
+        yTopBar,
+        yTopText,
+        itemHeight = Math.max(barSize, fontSize);
     
-    if (top < 20 || num < 1) return;
+    if (num < 1) return;
     
     while (colors.length < num) {
       colors.push(defaultBarColor);
     }
     
+    if (position === 'bottom') {
+      yTop = frame.height - itemHeight - 4;
+      if (layout.bottom > yTop) return;
+    } else {  
+      yTop = 4;
+      if (layout.top < itemHeight + yTop) return;
+    }
+    
+    yTopBar = ~~(yTop + (itemHeight - barSize) / 2);
+    yTopText = ~~(yTop + (itemHeight - fontSize) / 2 - fontSize / 5);
+    
     labelWidth = legendSize / num;
     xLeft = (width - legendSize) / 2;
     textWidth = labelWidth - barSize - 2;
     for (var i=0; i < num; ++ i) {
-      canvas.rectangle(~~xLeft, 2, barSize, ~~barSize, 0, {stroke: stroke, fill: colors[i], strokeWidth: strokeWidth}, 'legend-%@'.fmt(i));
-      canvas.text(~~(xLeft + 6 + barSize), 1, labelWidth - barSize - 12, fontSize, legend[i], {fill: labelColor, stroke: labelColor, textAnchor: textAnchor, fontSize: fontSize}, 'legend-label-%@'.fmt(i));
+      canvas.rectangle(~~xLeft, yTopBar, barSize, ~~barSize, 0, {stroke: stroke, fill: colors[i], strokeWidth: strokeWidth}, 'legend-%@'.fmt(i));
+      canvas.text(~~(xLeft + 6 + barSize), yTopText, labelWidth - barSize - 12, fontSize, legend[i], {fill: labelColor, stroke: labelColor, textAnchor: textAnchor, fontSize: fontSize}, 'legend-label-%@'.fmt(i));
       xLeft += labelWidth;
     }
   },
