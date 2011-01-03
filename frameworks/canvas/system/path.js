@@ -5,6 +5,18 @@ Sai.Path = Sai.Shape.extend({
   isPath: YES,
   path: null,
   
+  /**
+    Wheter the path should be dotted, dashed or none.
+    The available styles are:
+      * dot       => .....
+      * dash      => ------
+      * alternate => .-.-.-.-
+      * none      => normal line
+    
+    @property {String}
+  */
+  dotted: 'none',
+  
   render: function(canvas, firstTime) {
     var elem = null,
         path = this.get('path'),
