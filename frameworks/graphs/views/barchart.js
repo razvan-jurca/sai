@@ -370,6 +370,12 @@ Sai.BarChartView = Sai.AxisChartView.extend({
       axis.step = ~~(maxHeight/tCount);
     }
     
+    // If step is 0 it leads to Infinite count (it loops forever when rendering
+    // them)
+    if (axis.step < 1) {
+      axis.step = 1;
+    }
+    
     tCount = maxHeight / axis.step;
     
     axis.space = (end - start)/tCount;

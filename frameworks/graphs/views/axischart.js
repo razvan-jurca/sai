@@ -132,8 +132,9 @@ Sai.AxisChartView = Sai.CanvasView.extend({
       if (!SC.none(tick) && l) func(tick, l);
     }
   },
+  
   /**
-    Makes the grid of the chart.
+    Draws the grid of the chart.
     
     @param {Sai.Canvas} canvas The canvas onto which to draw the grid.
     @param {Array} axis An array containing the x and y axis definition. Each of
