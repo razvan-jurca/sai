@@ -203,7 +203,7 @@ Sai.LineChartView = Sai.AxisChartView.extend({
     @param {Number} top The y coordinate of the top of the chart.
   */
   _makeLegend: function(frame, canvas, legend, dAttrs, lAttrs, left) {
-    var xLeft, width, height, xTop,
+    var xLeft, width, height, xTop, xTopBar, xTopText,
         num = legend.length,
         colors = [],
         stroke = '#555',
@@ -213,7 +213,8 @@ Sai.LineChartView = Sai.AxisChartView.extend({
         labelColor = lAttrs.labelColor || 'black',
         fontSize = lAttrs.fontSize || 12,
         textAnchor = lAttrs.align || 'center',
-        defaultBarColor = lAttrs.defaultBarColor || '#aaa';
+        defaultBarColor = lAttrs.defaultBarColor || '#aaa',
+        itemHeight = Math.max(fontSize + 2, barSize);
     
     if (!SC.none(lAttrs.colors)) {
       colors = lAttrs.colors;
@@ -237,19 +238,24 @@ Sai.LineChartView = Sai.AxisChartView.extend({
     height = legendSize / num;
     xTop = ~~((frame.height - legendSize) / 2);
     
+    xTopBar = xTop + (itemHeight - barSize) / 2;
+    xTopText = xTop + (itemHeight - fontSize) / 2 - fontSize / 6;
+    
     for (var i=0; i < num; ++ i) {
-      canvas.rectangle(~~xLeft, ~~xTop + 1, ~~barSize, ~~barSize, 0, {
+      canvas.rectangle(~~xLeft, ~~xTopBar, ~~barSize, ~~barSize, 0, {
           stroke: stroke,
           fill: colors[i],
           strokeWidth: strokeWidth
         }, 'legend-%@'.fmt(i));
-      canvas.text(~~(xLeft + 4 + barSize), ~~xTop, width, fontSize, legend[i], {
+      canvas.text(~~(xLeft + 4 + barSize), ~~xTopText, width, fontSize, legend[i], {
           fill: labelColor,
           stroke: labelColor,
           textAnchor: textAnchor,
           fontSize: fontSize
         }, 'legend-label-%@'.fmt(i));
       xTop += height;
+      xTopBar += height;
+      xTopText += height;
     }
   },
   
