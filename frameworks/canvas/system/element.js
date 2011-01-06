@@ -12,6 +12,7 @@ Sai.Element = SC.Object.extend({
     
     // add the basic attrs
     attrs.id = this.id;
+    attrs.click = this.click || null;
     return attrs;
   },
 

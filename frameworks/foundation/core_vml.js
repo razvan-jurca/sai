@@ -97,6 +97,10 @@ Sai.mixin({
       }
       elem = elem.attr('dashstyle', nVal);
     }
+    else if (attr === 'click') {
+      if (val) elem.onclick = val;
+      return elem;
+    }
     else {
       elem = elem.attr(attr, val); 
     }
