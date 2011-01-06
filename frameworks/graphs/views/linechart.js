@@ -4,7 +4,7 @@
 /*globals Sai */
 sc_require('views/axischart');
 
-Sai.LineChartView = Sai.AxisChartView.extend({
+Sai.LineChartView = Sai.AxisChartView.extend(Sai.ChartLegend, {
   
   // ..........................................................
   // Properties

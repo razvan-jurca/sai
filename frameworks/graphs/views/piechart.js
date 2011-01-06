@@ -38,7 +38,6 @@ Sai.PieChartView = Sai.CanvasView.extend(
     dAttrs.values = (SC.typeOf(vals) === SC.T_BOOL) ? {fontSize: '9', pos: 'middle', color: 'black', bColor: 'lightgray'} : (SC.typeOf(vals) === SC.T_HASH) ? vals : null;
     
     if (!firstTime) canvas.clear(); // Make sure we are stating from scratch
-    console.log('DATA = ' + d);
     
     this._processPieData(f, canvas, d, dAttrs, legend);
   },
