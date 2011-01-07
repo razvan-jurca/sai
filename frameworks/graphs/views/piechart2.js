@@ -69,13 +69,9 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
     values: {
       percent: YES,
       /**
-        The position of the labels.
-      */
-      position: 'center',
-      /**
         Attributes used for the labels.
       */
-      attrs: {
+      text: {
         fontSize: 9,
         fill: 'black'
       },
@@ -125,7 +121,7 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
           strokeWidth: SC.none(attrs.strokeWidth) ? 1 : attrs.strokeWidth,
           stroke: attrs.stroke || 'black'
         },
-        region, slices, cx, cy, r;
+        region, slices, cx, cy, r, i;
     
     layout.left = layout.left || 0;
     layout.right = layout.right || 0;
@@ -139,7 +135,7 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
     cy = region.top + r;
     
     slices = this._computeSlices(region, percentage, colors);
-    for (var i=0; i < slices.length; ++ i) {
+    for (i=0; i < slices.length; ++ i) {
       this._renderSlice(canvas, cx, cy, r, slices.objectAt(i), sliceAttrs, attrs.clicks || NO);
     }
     if (slices.length === 0) {
@@ -147,6 +143,24 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
     }
     
     // TODO [RJ]: draw values/percents
+    if (attrs.values) {
+      var values = (attrs.values.percents ? percentage : this.get('data')) || [],
+          mul = attrs.values.percents ? 100 : 1,
+          rattrs = { 
+            fill: attrs.values.fill || 'transparent', 
+            stroke: attrs.values.stroke || 'transparent', 
+            strokeWidth: attrs.values.strokeWidth || 1 
+          },
+          tattrs = attrs.values.text || {};
+      
+      tattrs.fontSize = tattrs.fontSize || 9;
+      tattrs.fill = tattrs.fill || 'black';
+      tattrs.textAnchor = 'center';
+      
+      for (i=0; i < slices.length; ++ i) {
+        this._renderValues(canvas, cx, cy, r, slices.objectAt(i), ~~(values.objectAt(i) * mul * 100) / 100, rattrs, tattrs);
+      }
+    }
     
     this.makeLegend(canvas, frame, region);
   },
@@ -204,7 +218,7 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
     @param {Array} colors The colors used to render the slices.
   */
   _computeSlices: function(region, percentage, colors) {
-    var result = [], sa, ea = 0,
+    var result = [], da = -90, sa, ea = da,
         percent = 0,
         plen = percentage.length;
     
@@ -212,7 +226,7 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
       percent += percentage.objectAt(i);
       if (percentage.objectAt(i) > 0.001) {
         sa = ea;
-        ea = percent * 360;
+        ea = percent * 360 + da;
         result.push({
           index: i,
           color: colors.objectAt(i) || '#aaa',
@@ -243,12 +257,28 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
     if (clicks) attrs.click = function() { that.sliceClicked(slice.index); };
     else attrs.click = null;
     
-    x1 = cx + r * Math.cos(-slice.sangle * rad);
-    x2 = cx + r * Math.cos(-slice.eangle * rad);
-    y1 = cy + r * Math.sin(-slice.sangle * rad);
-    y2 = cy + r * Math.sin(-slice.eangle * rad);
-    path = ['M', cx, cy, 'L', x2, y2, 'A', r, r, 0, +(Math.abs(slice.eangle - slice.sangle) > 180), 1, x1, y1, 'Z'];
+    x1 = cx + r * Math.cos(slice.sangle * rad);
+    x2 = cx + r * Math.cos(slice.eangle * rad);
+    y1 = cy + r * Math.sin(slice.sangle * rad);
+    y2 = cy + r * Math.sin(slice.eangle * rad);
+    path = ['M', cx, cy, 'L', x1, y1, 'A', r, r, 0, +(Math.abs(slice.eangle - slice.sangle) > 180), 1, x2, y2, 'Z'];
     
     canvas.path(path, attrs, 'slice-%@'.fmt(slice.index));
+  },
+  
+  _renderValues: function(canvas, cx, cy, r, slice, value, rattrs, tattrs) {
+    var angle = (slice.eangle + slice.sangle) * Math.PI / 360,
+        dm = r / 2,
+        xm = cx + dm * Math.cos(angle),
+        ym = cy + dm * Math.sin(angle),
+        height = tattrs.fontSize * 1.1 + 4,
+        text = value.toString(),
+        width = tattrs.fontSize * text.length * 0.8,
+        w = width / 2,
+        h = height / 2;
+    
+    canvas.rectangle(xm - w, ym - h, width, height, 0, rattrs);
+    canvas.text(xm - w, ym - height / 1.2 + 2, width, height, text, tattrs);
+    
   }
 });
