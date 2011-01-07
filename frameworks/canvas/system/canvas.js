@@ -153,7 +153,8 @@ Sai.Canvas = SC.Object.extend({
       stroke: attrs.stroke || 'none',
       attrs: attrs,
       opacity: attrs.opacity,
-      click: attrs.click
+      click: attrs.click,
+      fontWeight: attrs.fontWeight
     });
     
     this._addCanvasElement(elem, id);

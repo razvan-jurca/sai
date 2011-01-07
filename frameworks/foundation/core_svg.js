@@ -95,7 +95,8 @@ Sai.mixin({
       } else {
         return '';
       }
-    } else if (attr === 'click') {
+    }
+    else if (attr === 'click') {
       if (val) elem.onclick = val;
       return val;
     }
