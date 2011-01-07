@@ -26,6 +26,7 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
   percentage: function() {
     var data = this.get('data') || [],
         sum = data.reduce(function(a,b) {return a + b;}, 0);
+    if (sum === 0) return data.map(function(v) { return 1 / data.length; });
     return data.map(function(v) { return v/sum; });
   }.property('data').cacheable(),
   
@@ -92,7 +93,7 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
   */
   chartLayout: { left: 5, right: 5, top: 5, bottom: 5 },
   
-  displayProperties: ['chartLayout', 'attrs', 'percentage', 'frame'],
+  displayProperties: ['chartLayout', 'attrs', 'percentage', 'frame', 'percentage'],
   
   ///
   /// Chart methods
@@ -286,7 +287,7 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
         xm = cx + dm * Math.cos(angle),
         ym = cy + dm * Math.sin(angle),
         height = tattrs.fontSize * 1.1 + 4,
-        width = tattrs.fontSize * text.length * 0.8,
+        width = Math.max(tattrs.fontSize * text.length * 0.8, height),
         w = width / 2,
         h = height / 2;
     
