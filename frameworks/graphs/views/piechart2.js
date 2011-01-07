@@ -142,23 +142,24 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
       canvas.circle(cx, cy, r, { stroke: '#777', strokeWidth: 1, fill: '#ddd' }, 'invalid-data-slice');
     }
     
-    // TODO [RJ]: draw values/percents
     if (attrs.values) {
       var values = (attrs.values.percents ? percentage : this.get('data')) || [],
           mul = attrs.values.percents ? 100 : 1,
+          extra = attrs.values.percents ? '%' : '',
           rattrs = { 
             fill: attrs.values.fill || 'transparent', 
             stroke: attrs.values.stroke || 'transparent', 
             strokeWidth: attrs.values.strokeWidth || 1 
           },
-          tattrs = attrs.values.text || {};
+          tattrs = attrs.values.text || {}, text;
       
       tattrs.fontSize = tattrs.fontSize || 9;
       tattrs.fill = tattrs.fill || 'black';
       tattrs.textAnchor = 'center';
       
       for (i=0; i < slices.length; ++ i) {
-        this._renderValues(canvas, cx, cy, r, slices.objectAt(i), ~~(values.objectAt(i) * mul * 100) / 100, rattrs, tattrs);
+        text = (Math.round(values.objectAt(i) * mul * 100) / 100).toString() + extra;
+        this._renderValues(canvas, cx, cy, r, slices.objectAt(i), text, rattrs, tattrs);
       }
     }
     
@@ -266,19 +267,30 @@ Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
     canvas.path(path, attrs, 'slice-%@'.fmt(slice.index));
   },
   
-  _renderValues: function(canvas, cx, cy, r, slice, value, rattrs, tattrs) {
+  /**
+    Renders the labels on the chart's slices, showing the value or percentages.
+    
+    @param {Sai.Canvas} canvas The canvas onto which to draw.
+    @param {Number} cx The x coordinate of the center of the chart.
+    @param {Number} cy The y coordinate of the center of the chart.
+    @param {Number} r The radius of the chart.
+    @param {Object} slice The slice's properties.
+    @param {String} text The text to display on the slice.
+    @param {Object} rattrs The attributes used to render the background of the label.
+    @param {Object} tattrs The attributes used to render the text.
+    @private
+  */
+  _renderValues: function(canvas, cx, cy, r, slice, text, rattrs, tattrs) {
     var angle = (slice.eangle + slice.sangle) * Math.PI / 360,
         dm = r / 2,
         xm = cx + dm * Math.cos(angle),
         ym = cy + dm * Math.sin(angle),
         height = tattrs.fontSize * 1.1 + 4,
-        text = value.toString(),
         width = tattrs.fontSize * text.length * 0.8,
         w = width / 2,
         h = height / 2;
     
     canvas.rectangle(xm - w, ym - h, width, height, 0, rattrs);
     canvas.text(xm - w, ym - height / 1.2 + 2, width, height, text, tattrs);
-    
   }
 });
