@@ -14,14 +14,14 @@ Sai.Spinner = {
     
     @propert {String}
   */
-  overlayColor: 'white',
+  spinnerOverlayColor: 'white',
   
   /**
     The opacity of the overlay.
     
     @property {Number}
   */
-  overlayOpacity: 0.5,
+  spinnerOverlayOpacity: 0.5,
   
   /**
     The size of the spinner to render.
@@ -31,11 +31,18 @@ Sai.Spinner = {
   spinnerSize: 40,
   
   /**
+    The color used to draw the spokes of the spinner.
+    
+    @property {String}
+  */
+  spinnerColor: 'black',
+  
+  /**
     The number of milliseconds after which the animation repeats.
     
     @property {Number}
   */
-  animationCycle: 800,
+  spinnerAnimationCycle: 800,
   
   /**
     Wheter to show the spinner or not.
@@ -44,11 +51,11 @@ Sai.Spinner = {
   */
   showSpinner: YES,
   
-  _elems: [],
+  _spinner_elems: [],
   
-  _animate: NO,
+  _spinner_animate: NO,
   
-  displayProperties: ['overlayColor', 'overlayOpacity', 'spinnerSize', 'showSpinner'],
+  displayProperties: ['spinnerOverlayColor', 'spinnerOverlayOpacity', 'spinnerSize', 'showSpinner', 'spinnerColor'],
   
   /**
     Start the animation when the spinner is displayed.
@@ -57,13 +64,13 @@ Sai.Spinner = {
   */
   updateAnimationStatus: function() {
     if (this.get('showSpinner')) {
-      if (!this._animate) {
-        this._animate = YES;
+      if (!this._spinner_animate) {
+        this._spinner_animate = YES;
         this._startTime = new Date();
-        this._animation_updateSpokes(this);
+        this._spinner_animation_updateSpokes(this);
       }
     } else {
-      this._animate = NO;
+      this._spinner_animate = NO;
     }
   }.observes('showSpinner'),
   
@@ -79,14 +86,15 @@ Sai.Spinner = {
         r = ~~(size /2),
         x = ~~((frame.width - size) / 2) + r,
         y = ~~((frame.height - size) / 2) + r,
-        elems = [];
+        elems = [],
+        spokeColor = this.get('spinnerColor');
     
-    canvas.rectangle(0, 0, frame.width, frame.height, 0, { fill: this.get('overlayColor') || 'white', opacity: this.get('overlayOpacity') });
+    canvas.rectangle(0, 0, frame.width, frame.height, 0, { fill: this.get('spinnerOverlayColor') || 'white', opacity: this.get('spinnerOverlayOpacity') });
     
     for (var angle = 0; angle < 360; angle += 30) {
-      elems.push(this._spinner_renderSpoke(canvas, x, y, angle, r, 'black'));
+      elems.push(this._spinner_renderSpoke(canvas, x, y, angle, r, spokeColor));
     }
-    this._elems = elems;
+    this._spinner_elems = elems;
     this.invokeLater(function() { this.updateAnimationStatus(); });
   },
   
@@ -121,10 +129,10 @@ Sai.Spinner = {
     @param {Sai.Spinner} that The spinner to animate.
     @private
   */
-  _animation_updateSpokes: function(that) {
+  _spinner_animation_updateSpokes: function(that) {
     var now = new Date() - that._startTime,
-        cycle = this.get('animationCycle'),
-        elems = that._elems,
+        cycle = this.get('spinnerAnimationCycle'),
+        elems = that._spinner_elems,
         len = elems.length,
         count = len,
         display = Math.min(len, 4),
@@ -150,6 +158,6 @@ Sai.Spinner = {
       }
     }
     
-    if (that._animate) setTimeout(function() { that._animation_updateSpokes(that) }, 0);
+    if (that._spinner_animate) setTimeout(function() { that._spinner_animation_updateSpokes(that) }, 0);
   }
 };
