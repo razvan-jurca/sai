@@ -35,7 +35,7 @@ Sai.Spinner = {
     
     @property {Number}
   */
-  cycle: 1000,
+  animationCycle: 800,
   
   /**
     Wheter to show the spinner or not.
@@ -123,7 +123,7 @@ Sai.Spinner = {
   */
   _animation_updateSpokes: function(that) {
     var now = new Date() - that._startTime,
-        cycle = 600, // repeat every cycle milliseconds
+        cycle = this.get('animationCycle'),
         elems = that._elems,
         len = elems.length,
         count = len,
