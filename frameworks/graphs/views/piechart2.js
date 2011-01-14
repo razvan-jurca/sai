@@ -5,7 +5,7 @@
   @author Razvan Jurca
   @class
 */
-Sai.PieChart2View = Sai.CanvasView.extend(Sai.ChartLegend, {
+Sai.ClickablePieChartView = Sai.CanvasView.extend(Sai.ChartLegend, {
   
   ///
   /// Chart attributes
