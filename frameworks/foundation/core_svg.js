@@ -97,7 +97,10 @@ Sai.mixin({
       }
     }
     else if (attr === 'click') {
-      if (val) elem.onclick = val;
+      if (val) {
+        elem.onclick = val;
+        elem.ontouchend = val;
+      }
       return val;
     }
     elem.setAttributeNS(null, nAttr, nVal);
