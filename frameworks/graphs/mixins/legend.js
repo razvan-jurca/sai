@@ -39,6 +39,11 @@ Sai.ChartLegend  = {
           // The left and top attributes above offset the position of the chart
           // from the position given by height/width, valign/halign and position
           position: 'top' | 'bottom' | 'left' | 'right'
+          
+          // Define the direction of the chart's label list (up-down or left-right)
+          // if not specified it will be vertical for position left or right or
+          // horizontal otherwise
+          direction: 'vertical' | 'horizontal' | null
         },
       
         text: {
@@ -270,7 +275,7 @@ Sai.ChartLegend  = {
       top: ~~top,
       width: ~~width,
       height: ~~height,
-      direction: (position === 'left' || position === 'right') ? 'vertical' : 'horizontal'
+      direction: SC.none(layout.direction) ? ((position === 'left' || position === 'right') ? 'vertical' : 'horizontal') : layout.direction
     };
   }
 };
