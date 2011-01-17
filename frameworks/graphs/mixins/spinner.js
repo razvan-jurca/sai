@@ -51,6 +51,25 @@ Sai.Spinner = {
   */
   showSpinner: YES,
   
+  /**
+    The desired framerate for the spinne animation (in frames per second).
+    
+    @property {Number}
+  */
+  spinnerFrameRate: 30,
+  
+  /**
+    The timeout between animation frames in number of milliseconds.
+    By default it is computed from the spinnerFrameRate property but it can be
+    set to an explicit timeout value (in number of milliseconds).
+    
+    @property {Number}
+  */
+  spinnerAnimationTimeOut: function() {
+    var rate = this.get('spinnerFrameRate') || 30;
+    return ~~(1000 / rate);
+  }.property('spinnerFrameRate').cacheable(),
+  
   _spinner_elems: [],
   
   _spinner_animate: NO,
@@ -126,13 +145,12 @@ Sai.Spinner = {
   /**
     Update the spokes' opacity at each animation step.
     
-    @param {Sai.Spinner} that The spinner to animate.
     @private
   */
-  _spinner_animation_updateSpokes: function(that) {
-    var now = new Date() - that._startTime,
+  _spinner_animation_updateSpokes: function() {
+    var now = new Date() - this._startTime,
         cycle = this.get('spinnerAnimationCycle'),
-        elems = that._spinner_elems,
+        elems = this._spinner_elems,
         len = elems.length,
         count = len,
         display = Math.min(len, 4),
@@ -158,6 +176,8 @@ Sai.Spinner = {
       }
     }
     
-    if (that._spinner_animate) setTimeout(function() { that._spinner_animation_updateSpokes(that) }, 0);
+    if (this._spinner_animate) {
+      this.invokeLater(this._spinner_animation_updateSpokes, this.get('spinnerAnimationTimeOut'), this);
+    }
   }
 };
