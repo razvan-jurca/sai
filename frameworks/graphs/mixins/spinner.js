@@ -143,7 +143,7 @@ Sai.Spinner = {
   },
   
   /**
-    Update the spokes' opacity at each animation step.
+    Update the spokes' opacity at each animation frame.
     
     @private
   */
@@ -152,32 +152,22 @@ Sai.Spinner = {
         cycle = this.get('spinnerAnimationCycle'),
         elems = this._spinner_elems,
         len = elems.length,
-        count = len,
-        display = Math.min(len, 4),
-        offset, round, elem, dalpha, alpha, i;
+        offset, elem, alpha;
     
     offset = (now % cycle) * len / cycle;
-    round = ~~offset;
-    dalpha = 1 - (offset - round);
+    alpha = 1 - (offset - ~~offset);
+    offset = ~~offset;
     
-    // Set the not displayed spokes as transparent
-    for (i = 0; i < len; ++ i) {
-      if (i < round || i >= round + count) {
-        elem = elems.objectAt(i);
-        if (elem && elem._element) elem._element.setAttributeNS(null, 'opacity', 0);
-      }
-    }
     // Set the displayed spokes' opacity
-    for (i=0;i<count;++i) {
-      elem = elems.objectAt( (i + round) % len );
-      alpha = (i + dalpha) / count;
+    for (var i = 0; i < len; ++ i) {
+      elem = elems.objectAt( (i + offset) % len );
       if (elem && elem._element) {
-        elem._element.setAttributeNS(null, 'opacity', alpha);
+        elem._element.setAttributeNS(null, 'opacity', (i + alpha) / len);
       }
     }
     
     if (this._spinner_animate) {
-      this.invokeLater(this._spinner_animation_updateSpokes, this.get('spinnerAnimationTimeOut'), this);
+      this.invokeLater(this._spinner_animation_updateSpokes, this.get('spinnerAnimationTimeOut'));
     }
   }
 };
