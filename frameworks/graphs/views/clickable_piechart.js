@@ -106,7 +106,7 @@ Sai.ClickablePieChartView = Sai.CanvasView.extend(Sai.ChartLegend, {
     @param {Number} sliceIndex The index of the slice that was clicked.
   */
   sliceClicked: function(sliceIndex) {
-    console.log('Slice ' + sliceIndex + ' was clicked.');
+    return NO;
   },
   
   /**
@@ -160,7 +160,7 @@ Sai.ClickablePieChartView = Sai.CanvasView.extend(Sai.ChartLegend, {
       
       for (i=0; i < slices.length; ++ i) {
         text = (Math.round(values.objectAt(i) * mul * 100) / 100).toString() + extra;
-        this._renderValues(canvas, cx, cy, r, slices.objectAt(i), text, rattrs, tattrs);
+        this._renderValues(canvas, cx, cy, r, slices.objectAt(i), text, rattrs, tattrs, attrs.clicks || NO);
       }
     }
     
@@ -253,11 +253,9 @@ Sai.ClickablePieChartView = Sai.CanvasView.extend(Sai.ChartLegend, {
     @private
   */
   _renderSlice: function(canvas, cx, cy, r, slice, attrs, clicks) {
-    var that = this, x1, x2, y1, y2, path, rad = Math.PI / 180;
+    var that = this, x1, x2, y1, y2, path, rad = Math.PI / 180, elem;
     
     attrs.fill = slice.color;
-    if (clicks) attrs.click = function() { that.sliceClicked(slice.index); };
-    else attrs.click = null;
     
     x1 = cx + r * Math.cos(slice.sangle * rad);
     x2 = cx + r * Math.cos(slice.eangle * rad);
@@ -265,7 +263,11 @@ Sai.ClickablePieChartView = Sai.CanvasView.extend(Sai.ChartLegend, {
     y2 = cy + r * Math.sin(slice.eangle * rad);
     path = ['M', cx, cy, 'L', x1, y1, 'A', r, r, 0, +(Math.abs(slice.eangle - slice.sangle) > 180), 1, x2, y2, 'Z'];
     
-    canvas.path(path, attrs, 'slice-%@'.fmt(slice.index));
+    elem = canvas.path(path, attrs, 'slice-%@'.fmt(slice.index));
+    // click support
+    if (clicks) {
+      elem.touchStart = elem.mouseDown = function() { return that.sliceClicked(slice.index); };
+    }
   },
   
   /**
@@ -281,7 +283,7 @@ Sai.ClickablePieChartView = Sai.CanvasView.extend(Sai.ChartLegend, {
     @param {Object} tattrs The attributes used to render the text.
     @private
   */
-  _renderValues: function(canvas, cx, cy, r, slice, text, rattrs, tattrs) {
+  _renderValues: function(canvas, cx, cy, r, slice, text, rattrs, tattrs, clicks) {
     var angle = (slice.eangle + slice.sangle) * Math.PI / 360,
         dm = r / 2,
         xm = cx + dm * Math.cos(angle),
@@ -289,9 +291,15 @@ Sai.ClickablePieChartView = Sai.CanvasView.extend(Sai.ChartLegend, {
         height = tattrs.fontSize * 1.1 + 4,
         width = Math.max(tattrs.fontSize * text.length * 0.8, height),
         w = width / 2,
-        h = height / 2;
+        h = height / 2,
+        that = this,
+        elem1, elem2;
     
-    canvas.rectangle(xm - w, ym - h, width, height, 0, rattrs);
-    canvas.text(xm - w, ym - height / 1.2 + 2, width, height, text, tattrs);
+    elem1 = canvas.rectangle(xm - w, ym - h, width, height, 0, rattrs);
+    elem2 = canvas.text(xm - w, ym - height / 1.2 + 2, width, height, text, tattrs);
+    // click support
+    if (clicks) {
+      elem1.touchStart = elem1.mouseDown = elem2.touchStart = elem2.mouseDown = function() { return that.sliceClicked(slice.index); };
+    }
   }
 });

@@ -86,7 +86,7 @@ Sai.Spinner = {
       if (!this._spinner_animate) {
         this._spinner_animate = YES;
         this._startTime = new Date();
-        this._spinner_animation_updateSpokes(this);
+        this._spinner_animation_updateSpokes();
       }
     } else {
       this._spinner_animate = NO;

@@ -82,8 +82,7 @@ Sai.Canvas = SC.Object.extend({
       stroke: attrs.stroke || 'black',
       strokeWidth: Sai.isZeroOrValue(attrs.strokeWidth, 0),
       fill: attrs.fill || 'none',
-      opacity: attrs.opacity,
-      click: attrs.click
+      opacity: attrs.opacity
     });
     if (x.isCircle && !id) id = y ; // Allow to passin ID with premade object.
     
@@ -104,8 +103,7 @@ Sai.Canvas = SC.Object.extend({
       dotted: attrs.dotted,
       fill: attrs.fill,
       path: path,
-      opacity: attrs.opacity,
-      click: attrs.click
+      opacity: attrs.opacity
     });
     
     this._addCanvasElement(elem, id);
@@ -128,8 +126,7 @@ Sai.Canvas = SC.Object.extend({
       stroke: attrs.stroke || 'black',
       strokeWidth: Sai.isZeroOrValue(attrs.strokeWidth, 0),
       fill: attrs.fill || 'none',
-      opacity: attrs.opacity,
-      click: attrs.click
+      opacity: attrs.opacity
     });
     
     this._addCanvasElement(elem, id);
@@ -153,7 +150,6 @@ Sai.Canvas = SC.Object.extend({
       stroke: attrs.stroke || 'none',
       attrs: attrs,
       opacity: attrs.opacity,
-      click: attrs.click,
       fontWeight: attrs.fontWeight
     });
     
