@@ -1,12 +1,6 @@
 /*globals Sai*/
 /**
   Spinner mixin providing functions for rendering a loading spinner.
-  Usage: include the renderSpinner method at the end of the renderCanvas method.
-  @example
-    renderCanvas: function(canvas, firstTime) {
-      ...
-      this.renderSpinner(canvas, firstTime);
-    }
 */
 Sai.Spinner = {
   /**
@@ -92,6 +86,17 @@ Sai.Spinner = {
       this._spinner_animate = NO;
     }
   }.observes('showSpinner'),
+  
+  /**
+    Initialize mixin, add render spinner call to the render canvas method.
+  */
+  initMixin: function() {
+    this._old_renderCanvas = this.renderCanvas;
+    this.renderCanvas = function(canvas, firstTime) {
+      this._old_renderCanvas(canvas, firstTime);
+      this.renderSpinner(canvas, firstTime);
+    };
+  },
   
   /**
     Render the spinner. This method should be called a the end of the renderCanvas
